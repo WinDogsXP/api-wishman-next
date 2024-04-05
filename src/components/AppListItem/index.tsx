@@ -14,14 +14,16 @@ export default function AppListItem({
 }) {
   const router = useRouter();
 
+  const appRouteTarget = "/apps/" + appInfo.id;
+
   return (
     <ListItemButton
       component="a"
-      href={"/app/" + appInfo.id}
+      href={appRouteTarget}
       sx={{ display: "flex", flexDirection: "row", userSelect: "none", p: 0 }}
       onClick={(e) => {
         e.preventDefault();
-        router.push("/app/" + appInfo.id);
+        router.push(appRouteTarget);
       }}
     >
       <Box
