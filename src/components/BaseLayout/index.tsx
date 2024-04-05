@@ -1,5 +1,4 @@
 "use client";
-import { Brightness4 } from "@mui/icons-material";
 import {
   AppBar,
   Box,
