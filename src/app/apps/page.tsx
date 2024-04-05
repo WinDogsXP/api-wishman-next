@@ -1,14 +1,29 @@
 import AppListItem from "@/components/AppListItem";
-import { ArrowBack } from "@mui/icons-material";
-import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { Box, List, Paper, Typography } from "@mui/material";
 
 export default function ApplicationsPage() {
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 1.2 }}>
         Applications
-        <AppListItem appInfo={{ name: "Application Name", status: 200 }} />
       </Typography>
+      <Paper>
+        <List sx={{ p: 0 }}>
+          <AppListItem
+            appInfo={{ id: "abc", name: "Application Name", status: "stable" }}
+          />
+          <AppListItem
+            appInfo={{
+              id: "def",
+              name: "Application Name",
+              status: "unstable",
+            }}
+          />
+          <AppListItem
+            appInfo={{ id: "ghi", name: "Application Name", status: "down" }}
+          />
+        </List>
+      </Paper>
     </Box>
   );
 }
