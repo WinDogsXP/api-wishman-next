@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apps = await prisma.app.findMany();
+
   try {
     res.status(200).send({ apps });
   } catch (error) {
