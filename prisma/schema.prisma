@@ -14,6 +14,7 @@ model App {
   description String      @default("")
   endpoint    Endpoint[]
   hours       Int         @default(12)
+  reportEmail String      @default("")
   isBugged    Boolean     @default(false)
   bugReport   BugReport[]
 }
@@ -49,8 +50,8 @@ model BugReport {
   reportDate DateTime  @default(now())
   solveDate  DateTime?
   details    String
+  name       String
   receiver   String?
-  endpointId String
   App        App?      @relation(fields: [appId], references: [id], onDelete: Cascade)
   appId      String?
 }
