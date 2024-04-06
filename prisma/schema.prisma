@@ -11,7 +11,8 @@ model App {
   id       String     @id @default(uuid())
   userId   String
   name     String
-  Endpoint Endpoint[]
+  endpoint Endpoint[]
+  hours    Int        @default(12)
 }
 
 model Endpoint {
@@ -25,8 +26,8 @@ model Endpoint {
   interval     Int
   isBugged     Boolean
   status       String         @default("Stable")
-  EndpointCall EndpointCall[]
-  BugReport    BugReport[]
+  endpointCall EndpointCall[]
+  bugReport    BugReport[]
 }
 
 model EndpointCall {
@@ -39,10 +40,11 @@ model EndpointCall {
 }
 
 model BugReport {
-  id          String   @id @default(uuid())
-  endpoint    Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
-  report_date DateTime @default(now())
-  solve_date  DateTime
+  id          String    @id @default(uuid())
+  endpoint    Endpoint  @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  report_date DateTime  @default(now())
+  solve_date  DateTime?
   details     String
+  receiver    String?
   endpointId  String
 }
