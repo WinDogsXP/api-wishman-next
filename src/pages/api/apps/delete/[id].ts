@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const id = req.query.id as string;
-    const { userId } = req.body;
+    const { userId } = JSON.parse(req.body);
 
     const userApps = await prisma.app.findFirst({
       where: {

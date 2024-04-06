@@ -17,6 +17,7 @@ import {
   Button,
   Box,
   ListItem,
+  Menu,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -62,6 +63,32 @@ export default function ApplicationPage({
       });
   }
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleDeleteMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleDeleteClose = () => {
+    setAnchorEl(null);
+  };
+
+  function deleteApp() {
+    fetch("/api/apps/delete/" + params.id, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/json",
+      },
+      body: JSON.stringify({ userId: user?.uid }),
+    })
+      .then((res) => {
+        enqueueSnackbar<"error">("Application deleted successfully!");
+        router.replace("/dev/apps");
+      })
+      .catch((error) => {
+        console.error(error);
+        enqueueSnackbar<"error">("Failed to delete application!");
+      });
+  }
+
   useEffect(() => {
     if (loading) loadApp();
   }, [loading]);
@@ -96,11 +123,61 @@ export default function ApplicationPage({
                 </Stack>
               </Button>
             </Tooltip>
-            <Tooltip title="Delete application">
-              <IconButton color="inherit">
-                <Delete />
-              </IconButton>
-            </Tooltip>
+            <Box>
+              <Tooltip title="Delete application">
+                <IconButton color="inherit" onClick={handleDeleteMenu}>
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="menu-delete-popup"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleDeleteClose}
+              >
+                <Stack
+                  sx={{
+                    maxWidth: "280px",
+                    px: 1.6,
+                    py: 0.6,
+                    gap: 1,
+                  }}
+                >
+                  <Typography>
+                    Are you sure you want to delete this application?
+                  </Typography>
+                  <Stack direction="row" gap={1}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={() => {
+                        handleDeleteClose();
+                        deleteApp();
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      color="inherit"
+                      onClick={() => {
+                        handleDeleteClose();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Menu>
+            </Box>
           </>
         )}
       </PageHeader>
