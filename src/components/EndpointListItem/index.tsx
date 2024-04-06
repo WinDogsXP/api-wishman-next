@@ -12,7 +12,7 @@ export default function EndpointListItem({
   const router = useRouter();
 
   const hrefTarget =
-    "/app/" + endpointInfo.appId + "/endpoints/" + endpointInfo.id;
+    "/apps/" + endpointInfo.appId + "/endpoints/" + endpointInfo.id;
 
   return (
     <ListItemButton
