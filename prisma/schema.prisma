@@ -50,7 +50,6 @@ model BugReport {
   solveDate  DateTime?
   details    String
   receiver   String?
-  endpointId String
   App        App?      @relation(fields: [appId], references: [id], onDelete: Cascade)
   appId      String?
 }
