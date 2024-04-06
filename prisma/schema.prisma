@@ -31,20 +31,22 @@ model Endpoint {
 }
 
 model EndpointCall {
-  id          String   @id @default(uuid())
-  endpoint    Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
-  date        DateTime
-  duration    Int
-  endpointId  String
-  status_code Int
+  id             String   @id @default(uuid())
+  date           DateTime
+  endpoint       Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  duration       Int
+  endpointId     String
+  statusCode     Int      @default(200)
+  responseBody   String   @default("")
+  responseHeader String   @default("")
 }
 
 model BugReport {
-  id          String    @id @default(uuid())
-  endpoint    Endpoint  @relation(fields: [endpointId], references: [id], onDelete: Cascade)
-  report_date DateTime  @default(now())
-  solve_date  DateTime?
-  details     String
-  receiver    String?
-  endpointId  String
+  id         String    @id @default(uuid())
+  endpoint   Endpoint  @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  reportDate DateTime  @default(now())
+  solveDate  DateTime?
+  details    String
+  receiver   String?
+  endpointId String
 }
