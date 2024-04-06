@@ -4,7 +4,7 @@ import EndpointListItem from "@/components/EndpointListItem";
 import PageHeader from "@/components/PageHeader";
 import { AppInfo, Endpoint } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { Add, BugReport, Delete, Edit } from "@mui/icons-material";
 import {
   Paper,
   Stack,
@@ -183,15 +183,31 @@ export default function ApplicationPage({
       </PageHeader>
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Stack gap={1}>
-        <Paper sx={{ p: 1 }}>
-          <List>
-            <ListItem>
-              <Typography>ID: {params.id}</Typography>
-            </ListItem>
-            <ListItem>
-              <Typography>Description: {appInfo?.description}</Typography>
-            </ListItem>
-          </List>
+        <Paper>
+          <Stack gap={1} sx={{ p: 1.8 }}>
+            <Typography>Description: {appInfo?.description}</Typography>
+            <Typography>
+              Time interval of samples: {appInfo?.hours} hours
+            </Typography>
+            <Typography sx={{ opacity: 0.6, fontSize: "10pt" }}>
+              ID: {params.id}
+            </Typography>
+          </Stack>
+
+          <Divider />
+          <Stack gap={1} sx={{ px: 1.8, py: 0.9 }} direction="row">
+            <Typography sx={{ py: 0.7 }}>Any issues?</Typography>
+            <Button
+              component="a"
+              href={"/apps/" + params.id + "/bugs/new"}
+              color="info"
+              sx={{ gap: 1 }}
+              onClick={handleRouterPush(router)}
+            >
+              <BugReport />
+              <Typography>Report a bug</Typography>
+            </Button>
+          </Stack>
         </Paper>
 
         <Stack>
