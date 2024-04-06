@@ -1,12 +1,12 @@
 "use client";
 import { AppInfo } from "@/types";
 import { Box, Button, Divider, Paper, Stack, TextField } from "@mui/material";
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../../components/PageHeader";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import formDataToDict from "@/util/formDataToDict";
 
-export default function AppInfoForm({ appInfo }: { appInfo?: AppInfo }) {
+export default function AppEditForm({ appInfo }: { appInfo?: AppInfo }) {
   const [user] = useAuthState(auth);
 
   const newAppInfo: AppInfo = appInfo || {
@@ -48,7 +48,7 @@ export default function AppInfoForm({ appInfo }: { appInfo?: AppInfo }) {
         title={(appInfo ? "Edit" : "Add") + " application"}
         backButton
       />
-      <Paper sx={{ px: 1.3, py: 1.7 }}>
+      <Paper sx={{ px: 1.3, py: 1.7, pt: 0.3 }}>
         <Stack spacing={1.7}>
           <input type="hidden" name="id" defaultValue={newAppInfo.id} />
           <input type="hidden" name="userId" defaultValue={newAppInfo.userId} />
