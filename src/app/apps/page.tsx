@@ -1,7 +1,8 @@
 "use client";
 import AppListItem from "@/components/AppListItem";
+import PageNavBar from "@/components/PageNavBar";
 import { AppInfo } from "@/types";
-import { Refresh, Visibility } from "@mui/icons-material";
+import { Refresh } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -22,9 +23,6 @@ export default function ApplicationsPage() {
     fetch("/api/apps/get")
       .then((res) => res.json())
       .then((res) => {
-        if (res.apps.length == 0) {
-          console.log("No apps!");
-        }
         setAppList(res.apps);
         setLoading(false);
       })
@@ -40,10 +38,7 @@ export default function ApplicationsPage() {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 1.2, mb: 1.2 }}>
-        <Typography variant="h5" sx={{ flexGrow: 1, pl: 1, py: 0.5 }}>
-          Applications
-        </Typography>
+      <PageNavBar title="Applications" backButton={true}>
         <IconButton
           disabled={loading}
           onClick={() => {
@@ -52,7 +47,7 @@ export default function ApplicationsPage() {
         >
           <Refresh />
         </IconButton>
-      </Box>
+      </PageNavBar>
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Paper>
         {appList.length > 0 ? (
