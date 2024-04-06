@@ -11,7 +11,6 @@ model App {
   id       String     @id @default(uuid())
   userId   String
   name     String
-  status   String     @default("Stable")
   Endpoint Endpoint[]
 }
 
