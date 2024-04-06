@@ -3,12 +3,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const id = req.query.id as string;
-    const { details, name } = req.body;
+    const { appId, details, name } = req.body;
 
     const { reportEmail } = (await prisma.app.findFirst({
       where: {
-        id,
+        id: appId,
       },
       select: {
         reportEmail: true,
@@ -17,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await prisma.bugReport.create({
       data: {
-        appId: id,
+        appId,
         name,
         details,
         receiver: reportEmail,
@@ -25,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     await prisma.app.update({
       where: {
-        id,
+        id: appId,
       },
       data: { isBugged: true },
     });
@@ -36,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         pass: process.env.EMAIL_PASS,
       },
     });
-    const link = "http://localhost:3000/apps/" + id;
+    const link = "http://localhost:3000/apps/" + appId;
     var mailOptions = {
       from: "think.er2869@gmail.com",
       to: reportEmail,
