@@ -2,6 +2,7 @@
 import {
   useAuthState,
   useSignInWithEmailAndPassword,
+  useSignInWithGithub,
 } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import {
@@ -22,6 +23,10 @@ import handleRouterPush from "@/util/handleRouterPush";
 const SignIn = () => {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+  const [signInWithGithub, userGithub, loadingGithub, errorGithub] =
+    useSignInWithGithub(auth);
+  const [signInWithGoogle, userGoogle, loadingGoogle, errorGoogle] =
+    useSignInWithGithub(auth);
   const [userState] = useAuthState(auth);
   const router = useRouter();
   const theme = useTheme();
@@ -36,6 +41,13 @@ const SignIn = () => {
     console.log(user);
     sessionStorage.setItem("user", JSON.stringify(user));
     return false;
+  };
+  const handleGithub = async (event: FormEvent) => {
+    event.preventDefault;
+    const res = await signInWithGithub();
+    console.log(errorGithub);
+    console.log(userGithub);
+    console.log(loading);
   };
 
   useEffect(() => {
@@ -62,6 +74,7 @@ const SignIn = () => {
         <Typography variant="h5">Log In</Typography>
         <Divider />
       </Box>
+
       <Box
         component="form"
         onSubmit={handleLogIn}
@@ -114,6 +127,7 @@ const SignIn = () => {
           </Button>
         </Box>
       </Box>
+      <button onClick={handleGithub}>loginGithub</button>
       <Divider />
       <Box sx={{ display: "flex", gap: 1, textAlign: "center", mx: "auto" }}>
         <Typography sx={{ p: 0.6 }}>Don&apos;t have an account?</Typography>
