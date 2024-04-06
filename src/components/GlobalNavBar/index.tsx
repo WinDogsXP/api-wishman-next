@@ -2,7 +2,7 @@
 
 import { auth } from "@/app/firebase/config";
 import handleRouterPush from "@/util/handleRouterPush";
-import { Apps } from "@mui/icons-material";
+import { Apps, Login } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -15,6 +15,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  Link,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -61,7 +62,13 @@ export default function GlobalNavBar({
         }}
       >
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          API Wishman
+          <Link
+            href="/"
+            style={{ color: "inherit", textDecoration: "inherit" }}
+            onClick={handleRouterPush(router)}
+          >
+            API Wishman
+          </Link>
         </Typography>
 
         <Button
@@ -140,14 +147,27 @@ export default function GlobalNavBar({
               </Box>
             </>
           ) : (
-            <Button
-              component="a"
-              href="/dev/login"
-              color="inherit"
-              onClick={handleRouterPush(router)}
-            >
-              Dev Login
-            </Button>
+            <>
+              <Button
+                component="a"
+                href="/dev/login"
+                color="inherit"
+                sx={{ display: { xs: "none", sm: "flex" } }}
+                onClick={handleRouterPush(router)}
+              >
+                Dev Login
+              </Button>
+              <Tooltip title="Dev Login">
+                <IconButton
+                  component="a"
+                  href="/dev/login"
+                  sx={{ display: { xs: "flex", sm: "none" } }}
+                  onClick={handleRouterPush(router)}
+                >
+                  <Login />
+                </IconButton>
+              </Tooltip>
+            </>
           ))}
       </Toolbar>
     </AppBar>
