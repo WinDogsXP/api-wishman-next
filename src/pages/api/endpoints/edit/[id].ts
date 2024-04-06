@@ -1,4 +1,5 @@
 import prisma from "@/prismadb";
+import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -35,6 +36,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         body,
       },
     });
+
+    const response = await axios.post(
+      "http://localhost:8080/update",
+      updatedEndpoint
+    );
 
     res.status(200).json({ updatedEndpoint });
   } catch (error) {
