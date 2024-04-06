@@ -2,35 +2,54 @@ import prisma from "@/prismadb";
 import { AppInfo, Endpoint } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const getStatus = (endpoints: Endpoint[]) => {
+const getStatus = (endpoints: Endpoint[], isBugged: boolean) => {
   const statuses = endpoints.map((endpoint) => endpoint.status);
   let allDown = true;
   let allStable = true;
   statuses.forEach((stat) => {
-    if (stat == "Stable") allDown = false;
+    if (stat == "Stable") {
+      allDown = false;
+    }
     if (stat == "Down") allStable = false;
   });
-  if (allStable || statuses.length === 0) return "Stable";
+  if (allStable || statuses.length === 0)
+    return !isBugged ? "Stable" : "Unstable";
   if (allDown) return "Down";
   return "Unstable";
 };
 
-const appsWithLatestEndpointCall = async () => {
+const appsWithLatestEndpointCall = async (userId: string) => {
   try {
-    const apps = await prisma.app.findMany({
-      include: {
-        endpoint: {
+    const apps = userId
+      ? await prisma.app.findMany({
+          where: { userId },
           include: {
-            endpointCall: {
-              orderBy: {
-                date: "desc",
+            endpoint: {
+              include: {
+                endpointCall: {
+                  orderBy: {
+                    date: "desc",
+                  },
+                  take: 1,
+                },
               },
-              take: 1,
             },
           },
-        },
-      },
-    });
+        })
+      : await prisma.app.findMany({
+          include: {
+            endpoint: {
+              include: {
+                endpointCall: {
+                  orderBy: {
+                    date: "desc",
+                  },
+                  take: 1,
+                },
+              },
+            },
+          },
+        });
 
     const appsWithStatus = apps.map((app) => {
       const latestEndpointCallDate =
@@ -40,7 +59,7 @@ const appsWithLatestEndpointCall = async () => {
 
       const { endpoint, ...appInfo } = {
         ...app,
-        status: getStatus(app.endpoint),
+        status: getStatus(app.endpoint, app.isBugged),
         latestEndpointCallDate,
       };
 
@@ -57,7 +76,8 @@ const appsWithLatestEndpointCall = async () => {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const apps = await appsWithLatestEndpointCall();
+    const { userId } = req.body;
+    const apps = await appsWithLatestEndpointCall(userId);
     res.status(200).json({ apps });
   } catch (error) {
     console.error(error);
