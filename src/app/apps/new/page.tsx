@@ -1,5 +1,5 @@
-import AppInfoForm from "@/templates/AppInfo";
+import AppEditForm from "@/templates/AppEdit";
 
 export default function NewApp() {
-  return <AppInfoForm />;
+  return <AppEditForm />;
 }
