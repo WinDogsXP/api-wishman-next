@@ -2,8 +2,9 @@ interface AppInfo {
   id: string;
   userId: string;
   name: string;
-  isBugged: boolean;
-  description: string;
+  isBugged?: boolean;
+  description?: string;
+  hours?: number;
   status?: "Stable" | "Unstable" | "Down";
 }
 interface Endpoint {
