@@ -12,6 +12,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
 export default function ApplicationsPage() {
@@ -20,15 +21,15 @@ export default function ApplicationsPage() {
 
   const loadApps = () => {
     setLoading(true);
-    fetch("/api/apps/get")
+    fetch("/api/apps/getAll")
       .then((res) => res.json())
       .then((res) => {
         setAppList(res.apps);
         setLoading(false);
       })
       .catch((reason) => {
-        console.log(reason);
         setLoading(false);
+        enqueueSnackbar<"error">("Error loading application list!");
       });
   };
 
