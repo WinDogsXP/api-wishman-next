@@ -14,6 +14,7 @@ model App {
   description String      @default("")
   endpoint    Endpoint[]
   hours       Int         @default(12)
+  reportEmail String      @default("")
   isBugged    Boolean     @default(false)
   bugReport   BugReport[]
 }
