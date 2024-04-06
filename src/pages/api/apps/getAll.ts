@@ -17,12 +17,12 @@ const getStatus = (endpoints: Endpoint[]) => {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apps = (await prisma.app.findMany({
     include: {
-      Endpoint: true,
+      endpoint: true,
     },
   })) as AppInfo[];
   console.log(apps);
   const appsWithStatus = apps.map((app) => {
-    return { ...app, status: getStatus(app.Endpoint) };
+    return { ...app, status: getStatus(app.endpoint) };
   });
 
   try {
