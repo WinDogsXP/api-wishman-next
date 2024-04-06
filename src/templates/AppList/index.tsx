@@ -42,7 +42,6 @@ export default function AppList({
   };
 
   const loadApps = () => {
-    setLoading(true);
     fetch(apiUrl, onlyUser ? userFetchParams : undefined)
       .then((res) => res.json())
       .then((res) => {
