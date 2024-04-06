@@ -1,24 +1,7 @@
 import prisma from "@/prismadb";
-import { stat } from "fs";
+import { AppInfo, Endpoint } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
-interface App {
-  id: string;
-  userId: string;
-  name: string;
-  Endpoint: Endpoint[];
-  status?: string; // Make status property optional
-}
-interface Endpoint {
-  id: string;
-  appId: string;
-  url: string;
-  headers: string;
-  method: string;
-  body: string;
-  interval: number;
-  isBugged: boolean;
-  status: string;
-}
+
 const getStatus = (endpoints: Endpoint[]) => {
   const statuses = endpoints.map((endpoint) => endpoint.status);
   let allDown = true;
@@ -36,14 +19,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     include: {
       Endpoint: true,
     },
-  })) as App[];
+  })) as AppInfo[];
   console.log(apps);
   const appsWithStatus = apps.map((app) => {
-    app = { ...app, status: getStatus(app.Endpoint) };
+    return { ...app, status: getStatus(app.Endpoint) };
   });
 
   try {
-    res.status(200).send({ appsWithStatus });
+    res.status(200).send({ apps: appsWithStatus });
   } catch (error) {
     res.status(500).send({ error });
   }
