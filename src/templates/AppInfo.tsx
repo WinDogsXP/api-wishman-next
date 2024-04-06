@@ -1,7 +1,7 @@
 "use client";
 import { AppInfo } from "@/types";
 import { Box, Button, Divider, Paper, Stack, TextField } from "@mui/material";
-import PageHeader from "../PageHeader";
+import PageHeader from "../components/PageHeader";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import formDataToDict from "@/util/formDataToDict";
