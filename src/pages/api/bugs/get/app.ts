@@ -13,7 +13,7 @@ export default async function handler(
 
   try {
     const bugs = await prisma.bugReport.findMany({
-      where: { App: { userId: userId } },
+      where: { App: { userId } },
       include: {
         App: {
           select: {
@@ -24,7 +24,7 @@ export default async function handler(
     });
 
     if (!bugs) {
-      return res.status(404).json({ message: "Bugs not found" });
+      return res.status(404).json(bugs);
     }
 
     return res.status(200).json(bugs);
