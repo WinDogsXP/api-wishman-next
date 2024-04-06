@@ -32,13 +32,19 @@ export default function AppList({
   const [user] = useAuthState(auth);
   const router = useRouter();
 
-  const apiUrl = onlyUser
-    ? "/api/apps/getUser/" + user?.uid
-    : "/api/apps/getAll";
+  const apiUrl = "/api/apps/getAll";
+  const userFetchParams = {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/json",
+    },
+    body: JSON.stringify({ userId: user?.uid }),
+  };
 
   const loadApps = () => {
     setLoading(true);
-    fetch(apiUrl)
+    console.log(userFetchParams);
+    fetch(apiUrl, onlyUser ? userFetchParams : undefined)
       .then((res) => res.json())
       .then((res) => {
         setAppList(res.apps);
@@ -53,7 +59,6 @@ export default function AppList({
 
   useEffect(() => {
     if (onlyUser && (user == null || user == undefined)) {
-      setLoading(false);
       return;
     } else if (loading) loadApps();
   }, [loading, onlyUser, user]);
