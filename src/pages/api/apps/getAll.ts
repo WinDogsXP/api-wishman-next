@@ -14,25 +14,54 @@ const getStatus = (endpoints: Endpoint[]) => {
   if (allDown) return "Down";
   return "Unstable";
 };
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const apps = (await prisma.app.findMany({
-    include: {
-      endpoint: true,
-    },
-  })) as AppInfo[];
-  console.log(apps);
-  const appsWithStatus = apps.map((app) => {
-    const { endpoint, ...appInfo } = {
-      ...app,
-      status: getStatus(app.endpoint),
-    };
-    return appInfo;
-  });
 
+const appsWithLatestEndpointCall = async () => {
   try {
-    res.status(200).send({ apps: appsWithStatus });
+    const apps = await prisma.app.findMany({
+      include: {
+        endpoint: {
+          include: {
+            endpointCall: {
+              orderBy: {
+                date: "desc",
+              },
+              take: 1,
+            },
+          },
+        },
+      },
+    });
+
+    const appsWithStatus = apps.map((app) => {
+      const latestEndpointCallDate =
+        app.endpoint.length > 0 && app.endpoint[0].endpointCall.length > 0
+          ? app.endpoint[0].endpointCall[0].date
+          : undefined;
+
+      const { endpoint, ...appInfo } = {
+        ...app,
+        status: getStatus(app.endpoint),
+        latestEndpointCallDate,
+      };
+
+      return appInfo;
+    });
+
+    return appsWithStatus;
   } catch (error) {
-    res.status(500).send({ error });
+    throw new Error(
+      "Error fetching apps with latest endpoint call dates: " + error.message
+    );
+  }
+};
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const apps = await appsWithLatestEndpointCall();
+    res.status(200).json({ apps });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
