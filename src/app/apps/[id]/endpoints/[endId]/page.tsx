@@ -36,11 +36,13 @@ export default function EndpointPage({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // fetch("/api/endpoints/get" + params.endId).then((res) => {
-    //   res.json().then((json) => {
-    //     setInfo(json);
-    //   });
-    // });
+    fetch("/api/endpoints/get/" + params.endId).then((res) => {
+      res.json().then((json) => {
+        console.log(json);
+        setLoading(false);
+        setInfo(json);
+      });
+    });
     setInfo({ name: "/" } as Endpoint);
   }, []);
 
