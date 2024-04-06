@@ -22,7 +22,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   })) as AppInfo[];
   console.log(apps);
   const appsWithStatus = apps.map((app) => {
-    return { ...app, status: getStatus(app.endpoint) };
+    const { endpoint, ...appInfo } = {
+      ...app,
+      status: getStatus(app.endpoint),
+    };
+    return appInfo;
   });
 
   try {
