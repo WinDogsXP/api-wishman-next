@@ -4,7 +4,7 @@ import EndpointListItem from "@/components/EndpointListItem/EndpointListItem";
 import PageHeader from "@/components/PageHeader";
 import { AppInfo, Endpoint } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
-import { Add } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import {
   Paper,
   Stack,
@@ -14,6 +14,8 @@ import {
   LinearProgress,
   List,
   Tooltip,
+  Button,
+  Box,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -31,6 +33,7 @@ export default function ApplicationPage({
   const router = useRouter();
   const [appInfo, setAppInfo] = useState<AppInfo>();
   const [loading, setLoading] = useState(true);
+  const [canEdit, setCanEdit] = useState(false);
 
   function loadApp() {
     fetch(apiUrl + params.id)
@@ -58,12 +61,40 @@ export default function ApplicationPage({
   }
 
   useEffect(() => {
-    loadApp();
-  }, []);
+    if (loading) loadApp();
+  }, [loading]);
+
+  useEffect(() => {
+    setCanEdit(
+      user != null &&
+        user != undefined &&
+        appInfo != undefined &&
+        user?.uid == appInfo?.userId
+    );
+  }, [user, appInfo]);
 
   return (
     <>
-      <PageHeader title="Application" backButton={true} />
+      <PageHeader title="Application" backButton={true}>
+        {canEdit && (
+          <>
+            <Tooltip title="Edit application">
+              <Button color="inherit">
+                <Stack direction="row" gap={1}>
+                  <Edit />
+                  <Typography>Edit</Typography>
+                </Stack>
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete application">
+              <IconButton color="inherit">
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
+      </PageHeader>
+      <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Stack gap={1}>
         <Paper sx={{ p: 1 }}>
           <Typography>ID: {params.id}</Typography>
@@ -71,11 +102,11 @@ export default function ApplicationPage({
 
         <Stack>
           <PageHeader small title="Endpoints">
-            {user && appInfo && user?.uid == appInfo?.userId && (
+            {canEdit && (
               <Tooltip title="Create new endpoint">
                 <IconButton
                   component="a"
-                  href="/apps/new"
+                  href="/endpoints/new"
                   onClick={handleRouterPush(router)}
                 >
                   <Add />
@@ -83,22 +114,25 @@ export default function ApplicationPage({
               </Tooltip>
             )}
           </PageHeader>
-          <LinearProgress
-            style={{ visibility: loading ? "visible" : "hidden" }}
-          />
           <Paper>
-            {appInfo?.endpoint && (
-              <List sx={{ p: "0 !important" }}>
-                {appInfo.endpoint.map((endpointInfo, index) => (
-                  <div key={index}>
-                    <EndpointListItem endpointInfo={endpointInfo} />
-                    {appInfo.endpoint &&
-                      index < appInfo.endpoint.length - 1 && (
-                        <Divider variant="inset" />
-                      )}
-                  </div>
-                ))}
-              </List>
+            {!appInfo || !appInfo.endpoint || appInfo.endpoint.length == 0 ? (
+              <Box sx={{ p: 3, textAlign: "center" }}>
+                <Typography variant="h6">No endpoints</Typography>
+              </Box>
+            ) : (
+              appInfo.endpoint && (
+                <List sx={{ p: "0 !important" }}>
+                  {appInfo.endpoint.map((endpointInfo, index) => (
+                    <div key={index}>
+                      <EndpointListItem endpointInfo={endpointInfo} />
+                      {appInfo.endpoint &&
+                        index < appInfo.endpoint.length - 1 && (
+                          <Divider variant="inset" />
+                        )}
+                    </div>
+                  ))}
+                </List>
+              )
             )}
           </Paper>
         </Stack>
