@@ -18,7 +18,7 @@ const getStatus = (endpoints: Endpoint[], isBugged: boolean) => {
   return "Unstable";
 };
 
-const appsWithLatestEndpointCall = async (userId: string) => {
+const appsWithLatestEndpointCall = async (userId?: string) => {
   try {
     const apps = userId
       ? await prisma.app.findMany({
@@ -76,8 +76,14 @@ const appsWithLatestEndpointCall = async (userId: string) => {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { userId } = req.body;
-    const apps = await appsWithLatestEndpointCall(userId);
+    let _userId = undefined;
+
+    try {
+      const { userId } = JSON.parse(req.body);
+      _userId = userId;
+    } catch (error) {}
+
+    const apps = await appsWithLatestEndpointCall(_userId);
     res.status(200).json({ apps });
   } catch (error) {
     console.error(error);
