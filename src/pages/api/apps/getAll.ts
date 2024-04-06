@@ -31,6 +31,9 @@ const appsWithLatestEndpointCall = async (userId?: string) => {
                     date: "desc",
                   },
                   take: 1,
+                  select: {
+                    date: true,
+                  },
                 },
               },
             },
@@ -45,6 +48,9 @@ const appsWithLatestEndpointCall = async (userId?: string) => {
                     date: "desc",
                   },
                   take: 1,
+                  select: {
+                    date: true,
+                  },
                 },
               },
             },
