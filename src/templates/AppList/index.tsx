@@ -101,12 +101,12 @@ export default function AppList({
         ) : appList && appList.length > 0 ? (
           <List sx={{ p: 0 }}>
             {appList.map((appInfo, index) => (
-              <>
-                <AppListItem key={index} appInfo={appInfo} />
+              <div key={index}>
+                <AppListItem appInfo={appInfo} />
                 {index < appList.length - 1 && (
-                  <Divider key={index} variant="inset" component="li" />
+                  <Divider variant="inset" component="li" />
                 )}
-              </>
+              </div>
             ))}
           </List>
         ) : (
