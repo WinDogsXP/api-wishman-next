@@ -3,6 +3,7 @@
 import { auth } from "@/app/firebase/config";
 import EndpointListItem from "@/components/EndpointListItem";
 import PageHeader from "@/components/PageHeader";
+import ProgressBarElement from "@/components/ProgressBarElement";
 import { AppInfo, Endpoint } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
 import { Add, Delete, Edit } from "@mui/icons-material";
@@ -19,10 +20,16 @@ import {
   Box,
   ListItem,
 } from "@mui/material";
+import { Gauge, gaugeClasses, ScatterChart } from "@mui/x-charts";
+import { info } from "console";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+
+interface EndpointEx extends Endpoint {
+  endpointCalls: any[];
+}
 
 export default function EndpointPage({
   params,
@@ -30,20 +37,50 @@ export default function EndpointPage({
   params: { id: string; endId: string };
 }) {
   const [user] = useAuthState(auth);
-  const [info, setInfo] = useState<Endpoint>();
+  const [info, setInfo] = useState<EndpointEx>();
   const router = useRouter();
   const [canEdit, setCanEdit] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState(1 * 60 * 60);
+
+  const statuses = { Stable: 2, Unstable: 1, Down: 0 };
+  const statusesr = ["Down", "Unstable", "Stable"];
+
+  function sum(arr) {
+    let s = 0;
+    for (let i = 0; i < 10; i++) {
+      if (arr[i] == 2) {
+        s++;
+      }
+    }
+    return s;
+  }
 
   useEffect(() => {
     fetch("/api/endpoints/get/" + params.endId).then((res) => {
       res.json().then((json) => {
         console.log(json);
-        setLoading(false);
+        json.endpointCalls = json.endpointCalls.map(
+          (el: { date: string; status: any; id: any }) => {
+            const mod_el = {
+              date: Math.floor(
+                (Date.parse(el.date) - Date.now() + 1000 * period) / 1000
+              ),
+              status: el.status,
+              id: el.id,
+              statusNum: statuses[el.status as "Stable" | "Unstable" | "Down"],
+            };
+            return mod_el;
+          }
+        );
         setInfo(json);
+        setLoading(false);
+        // setTimeout(() => {
+        //   console.log(info?.endpointCalls);
+        // }, 10000);
       });
     });
-    setInfo({ name: "/" } as Endpoint);
+    setInfo({ name: "/" } as EndpointEx);
   }, []);
 
   return (
@@ -100,7 +137,93 @@ export default function EndpointPage({
             )}
           </PageHeader>
           <Paper>
-            <Typography>Sunt un endpoint</Typography>
+            {!loading && (
+              <ScatterChart
+                width={800}
+                height={300}
+                series={[
+                  {
+                    label: "Stable",
+                    data: info?.endpointCalls
+                      .filter((el) => el.statusNum == 2)
+                      .map((v) => ({
+                        x: v.date,
+                        y: v.statusNum,
+                        id: v.id,
+                      })),
+                  },
+                  {
+                    label: "Unstable",
+                    data: info?.endpointCalls
+                      .filter((el) => el.statusNum == 1)
+                      .map((v) => ({
+                        x: v.date,
+                        y: v.statusNum,
+                        id: v.id,
+                      })),
+                  },
+                  {
+                    label: "Down",
+                    data: info?.endpointCalls
+                      .filter((el) => el.statusNum == 0)
+                      .map((v) => ({
+                        x: v.date,
+                        y: v.statusNum,
+                        id: v.id,
+                      })),
+                  },
+                ]}
+              />
+            )}
+            <Paper
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Gauge
+                width={300}
+                height={300}
+                value={
+                  info?.endpointCalls
+                    ? sum(
+                        info?.endpointCalls.slice(-10).map((el) => el.statusNum)
+                      )
+                    : 0
+                }
+                valueMax={10}
+                valueMin={0}
+                startAngle={-110}
+                endAngle={110}
+                sx={(theme) => ({
+                  [`& .${gaugeClasses.valueText}`]: {
+                    fontSize: 40,
+                  },
+                  [`& .${gaugeClasses.valueArc}`]: {
+                    fill:
+                      (info?.endpointCalls
+                        ? sum(
+                            info?.endpointCalls
+                              .slice(-10)
+                              .map((el) => el.statusNum)
+                          )
+                        : 0) == 10
+                        ? "#52b202"
+                        : (info?.endpointCalls
+                            ? sum(
+                                info?.endpointCalls
+                                  .slice(-10)
+                                  .map((el) => el.statusNum)
+                              )
+                            : 0) == 0
+                        ? "red"
+                        : "yellow",
+                  },
+                })}
+                text={({ value, valueMax }) => `${value} / ${valueMax}`}
+              />
+            </Paper>
           </Paper>
         </Stack>
       </Stack>
