@@ -21,7 +21,7 @@ export default function PageHeader({
       sx={{
         display: "flex",
         gap: small ? 0.6 : 1.2,
-        mb: small ? 0.6 : 1.2,
+        mb: small ? 0.4 : 0.8,
         userSelect: "none",
       }}
     >
