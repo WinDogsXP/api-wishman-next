@@ -16,6 +16,7 @@ import {
   Tooltip,
   Button,
   Box,
+  ListItem,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -41,10 +42,11 @@ export default function ApplicationPage({
       .then((json) => {
         const _appInfo = json.app as AppInfo;
 
+        console.log(_appInfo);
+
         // Add appId to each endpoint object
         const _endpoints = [] as Endpoint[];
         _appInfo.endpoint?.forEach((endpoint, index) => {
-          console.log(endpoint);
           _endpoints[index] = endpoint;
           _endpoints[index].appId = _appInfo.id;
         });
@@ -75,11 +77,19 @@ export default function ApplicationPage({
 
   return (
     <>
-      <PageHeader title="Application" backButton={true}>
+      <PageHeader
+        title={appInfo ? appInfo.name : "Application"}
+        backButton={true}
+      >
         {canEdit && (
           <>
             <Tooltip title="Edit application">
-              <Button color="inherit">
+              <Button
+                component="a"
+                href={"/apps/" + params.id + "/edit"}
+                color="inherit"
+                onClick={handleRouterPush(router)}
+              >
                 <Stack direction="row" gap={1}>
                   <Edit />
                   <Typography>Edit</Typography>
@@ -97,7 +107,14 @@ export default function ApplicationPage({
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Stack gap={1}>
         <Paper sx={{ p: 1 }}>
-          <Typography>ID: {params.id}</Typography>
+          <List>
+            <ListItem>
+              <Typography>ID: {params.id}</Typography>
+            </ListItem>
+            <ListItem>
+              <Typography>Description: {appInfo?.description}</Typography>
+            </ListItem>
+          </List>
         </Paper>
 
         <Stack>
