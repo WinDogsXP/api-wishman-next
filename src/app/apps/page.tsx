@@ -27,7 +27,7 @@ export default function ApplicationsPage() {
         setAppList(res.apps);
         setLoading(false);
       })
-      .catch((reason) => {
+      .catch(() => {
         setLoading(false);
         enqueueSnackbar<"error">("Error loading application list!");
       });
@@ -51,7 +51,7 @@ export default function ApplicationsPage() {
       </PageHeader>
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Paper>
-        {appList.length > 0 ? (
+        {appList && appList.length > 0 ? (
           <List sx={{ p: 0 }}>
             {appList.map((appInfo, index) => (
               <>

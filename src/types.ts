@@ -2,7 +2,6 @@ interface AppInfo {
   id: string;
   userId: string;
   name: string;
-  endpoint: Endpoint[];
   status?: "Stable" | "Unstable" | "Down";
 }
 interface Endpoint {

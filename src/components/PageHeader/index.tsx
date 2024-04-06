@@ -15,7 +15,7 @@ export default function PageHeader({
   const router = useRouter();
 
   return (
-    <Box sx={{ display: "flex", gap: 1.2, mb: 1.2 }}>
+    <Box sx={{ display: "flex", gap: 1.2, mb: 1.2, userSelect: "none" }}>
       {backButton && (
         <IconButton
           onClick={() => {

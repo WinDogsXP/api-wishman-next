@@ -125,9 +125,6 @@ const SignUp = () => {
             >
               Sign Up
             </Button>
-            <Button variant="outlined" type="reset" disabled={loading}>
-              Cancel
-            </Button>
           </Box>
         </Box>
       )}

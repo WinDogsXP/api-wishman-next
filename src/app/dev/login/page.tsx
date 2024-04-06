@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { CheckCircle, Error } from "@mui/icons-material";
 import { FormEvent, useEffect } from "react";
+import handleRouterPush from "@/util/handleRouterPush";
 
 const SignIn = () => {
   const [signInWithEmailAndPassword, user, loading, error] =
@@ -111,23 +112,17 @@ const SignIn = () => {
           >
             Log In
           </Button>
-          <Button variant="outlined" type="reset" disabled={loading}>
-            Cancel
-          </Button>
         </Box>
       </Box>
       <Divider />
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box sx={{ display: "flex", gap: 1, textAlign: "center", mx: "auto" }}>
         <Typography sx={{ p: 0.6 }}>Don&apos;t have an account?</Typography>
         <Button
           component="a"
           href="/dev/signup"
           variant="outlined"
           type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            router.push("/dev/signup");
-          }}
+          onClick={handleRouterPush(router)}
         >
           Create account
         </Button>
