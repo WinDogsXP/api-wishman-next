@@ -3,16 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { endpointId, userId, interval } = req.body;
+    const id = req.query.id as string;
+    const { userId, name, description, hours } = req.body;
 
     const userApps = await prisma.app.findFirst({
       where: {
         userId: userId,
-        endpoint: {
-          some: {
-            id: endpointId,
-          },
-        },
+        id,
       },
     });
 
@@ -22,16 +19,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ error: "User does not own the endpoint data" });
     }
 
-    const updatedEndpoint = await prisma.endpoint.update({
+    const updatedApp = await prisma.app.update({
       where: {
-        id: endpointId,
+        id,
       },
       data: {
-        interval: interval,
+        name,
+        description,
+        hours,
       },
     });
 
-    res.status(200).json({ updatedEndpoint });
+    res.status(200).json({ status: "ok" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal server error" });
