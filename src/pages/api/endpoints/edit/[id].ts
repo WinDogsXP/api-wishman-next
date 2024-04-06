@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const id = req.query.id as string;
     const { userId, interval, url, headers, method, body } = req.body;
 
-    const userApps = await prisma.app.findFirst({
+    const userEndpoints = await prisma.app.findFirst({
       where: {
         userId: userId,
         endpoint: {
@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (!userApps) {
+    if (!userEndpoints) {
       return res
         .status(403)
         .json({ error: "User does not own the endpoint data" });
