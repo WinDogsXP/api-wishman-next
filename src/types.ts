@@ -2,6 +2,8 @@ interface AppInfo {
   id: string;
   userId: string;
   name: string;
+  isBugged: boolean;
+  description: string;
   status?: "Stable" | "Unstable" | "Down";
 }
 interface Endpoint {
@@ -12,7 +14,7 @@ interface Endpoint {
   method: string;
   body: string;
   interval: number;
-  isBugged: boolean;
+
   status: string;
 }
 type EndpointCall = {
