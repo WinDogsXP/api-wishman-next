@@ -3,27 +3,30 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { userId } = req.body;
+    const { userId } = JSON.parse(req.body);
 
-    const totalApps = prisma.app.count({
-      where: {
-        userId,
-      },
-    });
-    const totalIssues = prisma.app.count({
-      where: {
-        isBugged: true,
-        userId,
-      },
-    });
-    const activeReports = prisma.bugReport.count({
-      where: {
-        App: {
+    const [totalApps, totalIssues, activeReports] = await Promise.all([
+      prisma.app.count({
+        where: {
+          userId,
+        },
+      }),
+      prisma.app.count({
+        where: {
           isBugged: true,
           userId,
         },
-      },
-    });
+      }),
+      prisma.bugReport.count({
+        where: {
+          App: {
+            isBugged: true,
+            userId,
+          },
+        },
+      }),
+    ]);
+
     const stats = [
       {
         name: "Total apps",
