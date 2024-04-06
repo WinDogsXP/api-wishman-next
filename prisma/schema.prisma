@@ -49,6 +49,7 @@ model BugReport {
   reportDate DateTime  @default(now())
   solveDate  DateTime?
   details    String
+  name       String
   receiver   String?
   App        App?      @relation(fields: [appId], references: [id], onDelete: Cascade)
   appId      String?
