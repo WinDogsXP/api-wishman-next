@@ -133,7 +133,7 @@ export default function ApplicationPage({
                 id="menu-delete-popup"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                  vertical: "top",
+                  vertical: "bottom",
                   horizontal: "right",
                 }}
                 keepMounted
@@ -224,6 +224,7 @@ export default function ApplicationPage({
               </Tooltip>
             )}
           </PageHeader>
+
           <Paper>
             {!appInfo || !appInfo.endpoint || appInfo.endpoint.length == 0 ? (
               <Box sx={{ p: 3, textAlign: "center" }}>
