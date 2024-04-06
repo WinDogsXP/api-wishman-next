@@ -11,12 +11,13 @@ model App {
   id       String     @id @default(uuid())
   userId   String
   name     String
+  status   String     @default("Stable")
   Endpoint Endpoint[]
 }
 
 model Endpoint {
   id           String         @id @default(uuid())
-  app          App            @relation(fields: [appId], references: [id])
+  app          App            @relation(fields: [appId], references: [id], onDelete: Cascade)
   appId        String
   url          String
   headers      String
@@ -24,23 +25,23 @@ model Endpoint {
   body         String
   interval     Int
   isBugged     Boolean
+  status       String         @default("Stable")
   EndpointCall EndpointCall[]
   BugReport    BugReport[]
 }
 
 model EndpointCall {
   id          String   @id @default(uuid())
-  endpoint    Endpoint @relation(fields: [endpointId], references: [id])
+  endpoint    Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
   date        DateTime
   duration    Int
   endpointId  String
   status_code Int
-  status      String
 }
 
 model BugReport {
   id          String   @id @default(uuid())
-  endpoint    Endpoint @relation(fields: [endpointId], references: [id])
+  endpoint    Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
   report_date DateTime @default(now())
   solve_date  DateTime
   details     String
