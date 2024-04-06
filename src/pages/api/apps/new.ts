@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       data: postData,
     });
 
-    res.status(200).json({ status: "ok" });
+    res.status(200).json({ status: "ok", app: updatedApp });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal server error" });
