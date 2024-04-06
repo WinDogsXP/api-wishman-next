@@ -1,17 +1,10 @@
 "use client";
+import { AppInfo } from "@/types";
 import { WebAsset } from "@mui/icons-material";
 import { Box, Chip, ListItemButton, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-export default function AppListItem({
-  appInfo,
-}: {
-  appInfo: {
-    id: string;
-    name: string;
-    status: "stable" | "unstable" | "down";
-  };
-}) {
+export default function AppListItem({ appInfo }: { appInfo: AppInfo }) {
   const router = useRouter();
 
   const appRouteTarget = "/apps/" + appInfo.id;
@@ -42,14 +35,16 @@ export default function AppListItem({
         <Box>
           <Chip
             label={
-              appInfo.status.toString().charAt(0).toUpperCase() +
-              appInfo.status.toString().slice(1)
+              appInfo.status
+                ? appInfo.status.toString().charAt(0).toUpperCase() +
+                  appInfo.status.toString().slice(1)
+                : "Unknown"
             }
             size="small"
             color={
-              appInfo.status == "stable"
+              appInfo.status === "stable"
                 ? "success"
-                : appInfo.status == "unstable"
+                : appInfo.status === "unstable" || appInfo.status === undefined
                 ? "warning"
                 : "error"
             }
