@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Button,
   Divider,
@@ -18,26 +17,27 @@ import PageHeader from "@/components/PageHeader";
 import { useRouter } from "next/navigation";
 import handleRouterPush from "@/util/handleRouterPush";
 import { Apps, Logout } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const [user, loading] = useAuthState(auth);
+  const [user, loadingAuth] = useAuthState(auth);
   const [signOut, loadingSO, errorSO] = useSignOut(auth);
   const router = useRouter();
-
-  const stats = [
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState([
     {
       name: "Total apps",
-      value: 10,
+      value: "-",
     },
     {
       name: "Apps with issues",
-      value: 10,
+      value: "-",
     },
     {
       name: "Active reports",
-      value: 10,
+      value: "-",
     },
-  ];
+  ]);
 
   const linkList = [
     {
@@ -46,6 +46,30 @@ export default function DashboardPage() {
       href: "/dev/apps",
     },
   ];
+
+  const getStats = () => {
+    fetch("/api/report/count", {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/json",
+      },
+      body: JSON.stringify({ userId: user?.uid }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        setStats(res);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!loadingAuth) getStats();
+  }, [loadingAuth]);
 
   return (
     <>
@@ -83,6 +107,10 @@ export default function DashboardPage() {
                 </Paper>
               ))}
             </Stack>
+          </Paper>
+
+          <Paper>
+            <Typography variant="h5">Latest reports</Typography>
           </Paper>
 
           <Paper>
