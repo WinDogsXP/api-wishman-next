@@ -4,9 +4,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const data = req.body;
-
+    const { id: _, ...postData } = data;
     const updatedApp = await prisma.app.create({
-      data,
+      data: postData,
     });
 
     res.status(200).json({ status: "ok" });
