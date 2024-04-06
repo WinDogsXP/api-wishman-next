@@ -34,17 +34,12 @@ export default function AppListItem({ appInfo }: { appInfo: AppInfo }) {
         <Typography sx={{ gap: 0.5 }}>{appInfo.name}</Typography>
         <Box>
           <Chip
-            label={
-              appInfo.status
-                ? appInfo.status.toString().charAt(0).toUpperCase() +
-                  appInfo.status.toString().slice(1)
-                : "Unknown"
-            }
+            label={appInfo.status ? appInfo.status : "Unknown"}
             size="small"
             color={
-              appInfo.status === "stable"
+              appInfo.status === "Stable"
                 ? "success"
-                : appInfo.status === "unstable" || appInfo.status === undefined
+                : appInfo.status === "Unstable" || appInfo.status === undefined
                 ? "warning"
                 : "error"
             }
