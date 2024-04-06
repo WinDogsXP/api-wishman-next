@@ -1,6 +1,6 @@
 import prisma from "@/prismadb";
 import { NextApiRequest, NextApiResponse } from "next";
-
+import axios from "axios";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const id = req.query.id as string;
@@ -28,7 +28,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         name,
       },
     });
-
+    const response = await axios.post(
+      "http://localhost:8080/create",
+      updatedEndpoint
+    );
     res.status(200).json({ updatedEndpoint });
   } catch (error) {
     console.error(error);
