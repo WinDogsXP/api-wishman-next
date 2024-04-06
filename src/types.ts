@@ -5,6 +5,7 @@ interface AppInfo {
   isBugged?: boolean;
   description?: string;
   hours?: number;
+  reportEmail?: string;
   status?: "Stable" | "Unstable" | "Down";
 }
 interface Endpoint {
