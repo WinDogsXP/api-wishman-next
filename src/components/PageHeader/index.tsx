@@ -3,7 +3,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { Box, IconButton, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-export default function PageNavBar({
+export default function PageHeader({
   title,
   backButton,
   children,

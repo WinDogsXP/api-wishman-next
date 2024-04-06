@@ -1,6 +1,6 @@
 "use client";
 import AppListItem from "@/components/AppListItem";
-import PageNavBar from "@/components/PageNavBar";
+import PageHeader from "@/components/PageHeader";
 import { AppInfo } from "@/types";
 import { Refresh } from "@mui/icons-material";
 import {
@@ -39,7 +39,7 @@ export default function ApplicationsPage() {
 
   return (
     <Box>
-      <PageNavBar title="Applications" backButton={true}>
+      <PageHeader title="Applications" backButton={true}>
         <IconButton
           disabled={loading}
           onClick={() => {
@@ -48,7 +48,7 @@ export default function ApplicationsPage() {
         >
           <Refresh />
         </IconButton>
-      </PageNavBar>
+      </PageHeader>
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Paper>
         {appList.length > 0 ? (
