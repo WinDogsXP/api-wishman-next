@@ -8,26 +8,28 @@ datasource db {
 }
 
 model App {
-  id       String     @id @default(uuid())
-  userId   String
-  name     String
-  endpoint Endpoint[]
-  hours    Int        @default(12)
+  id          String      @id @default(uuid())
+  userId      String
+  name        String
+  description String
+  endpoint    Endpoint[]
+  hours       Int         @default(12)
+  isBugged    Boolean     @default(false)
+  bugReport   BugReport[]
 }
 
 model Endpoint {
   id           String         @id @default(uuid())
   app          App            @relation(fields: [appId], references: [id], onDelete: Cascade)
   appId        String
+  name         String
   url          String
   headers      String
   method       String
   body         String
   interval     Int
-  isBugged     Boolean
   status       String         @default("Stable")
   endpointCall EndpointCall[]
-  bugReport    BugReport[]
 }
 
 model EndpointCall {
@@ -43,10 +45,11 @@ model EndpointCall {
 
 model BugReport {
   id         String    @id @default(uuid())
-  endpoint   Endpoint  @relation(fields: [endpointId], references: [id], onDelete: Cascade)
   reportDate DateTime  @default(now())
   solveDate  DateTime?
   details    String
   receiver   String?
   endpointId String
+  App        App?      @relation(fields: [appId], references: [id], onDelete: Cascade)
+  appId      String?
 }

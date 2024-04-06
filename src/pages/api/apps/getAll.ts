@@ -48,7 +48,7 @@ const appsWithLatestEndpointCall = async () => {
     });
 
     return appsWithStatus;
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(
       "Error fetching apps with latest endpoint call dates: " + error.message
     );

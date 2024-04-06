@@ -16,5 +16,13 @@ interface Endpoint {
   isBugged: boolean;
   status: string;
 }
-
-export type { AppInfo, Endpoint };
+type EndpointCall = {
+  id: string;
+  date: Date;
+  duration: number;
+  endpointId: string;
+  statusCode: number;
+  responseBody: string;
+  responseHeader: string;
+};
+export type { AppInfo, Endpoint, EndpointCall };

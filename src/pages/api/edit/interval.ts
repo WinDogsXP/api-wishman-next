@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userApps = await prisma.app.findFirst({
       where: {
         userId: userId,
-        Endpoint: {
+        endpoint: {
           some: {
             id: endpointId,
           },
