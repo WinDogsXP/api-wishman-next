@@ -7,18 +7,21 @@ interface AppInfo {
   hours?: number;
   reportEmail?: string;
   status?: "Stable" | "Unstable" | "Down";
+  endpoint?: Endpoint[];
 }
 interface Endpoint {
   id: string;
-  appId: string;
-  url: string;
-  headers: string;
   method: string;
-  body: string;
-  interval: number;
-
+  name: string;
   status: string;
+  url: string;
+
+  appId?: string;
+  headers?: string;
+  body?: string;
+  interval?: number;
 }
+
 type EndpointCall = {
   id: string;
   date: Date;
