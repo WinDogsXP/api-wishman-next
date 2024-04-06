@@ -1,6 +1,6 @@
 "use client";
 import { auth } from "@/app/firebase/config";
-import EndpointListItem from "@/components/EndpointListItem/EndpointListItem";
+import EndpointListItem from "@/components/EndpointListItem";
 import PageHeader from "@/components/PageHeader";
 import { AppInfo, Endpoint } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
@@ -123,7 +123,7 @@ export default function ApplicationPage({
               <Tooltip title="Create new endpoint">
                 <IconButton
                   component="a"
-                  href="/endpoints/new"
+                  href={"/apps/" + params.id + "/endpoints/new"}
                   onClick={handleRouterPush(router)}
                 >
                   <Add />
