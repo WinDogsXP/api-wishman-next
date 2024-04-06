@@ -13,9 +13,9 @@ interface Endpoint {
   id: string;
   method: string;
   name: string;
-  status: string;
   url: string;
 
+  status?: string;
   appId?: string;
   headers?: string;
   body?: string;
