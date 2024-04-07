@@ -23,6 +23,17 @@ interface Endpoint {
   interval?: number;
 }
 
+interface BugInfo {
+  appId: string;
+  details: string;
+  id: string;
+  name: string;
+  date: string;
+  reportDate: string;
+  solveDate: string;
+  receiver: string;
+}
+
 type EndpointCall = {
   id: string;
   date: Date;
@@ -32,4 +43,4 @@ type EndpointCall = {
   responseBody: string;
   responseHeader: string;
 };
-export type { AppInfo, Endpoint, EndpointCall };
+export type { AppInfo, Endpoint, EndpointCall, BugInfo };
