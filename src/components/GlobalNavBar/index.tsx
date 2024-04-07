@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 
 export default function GlobalNavBar({
@@ -30,6 +30,12 @@ export default function GlobalNavBar({
   const [user, loading] = useAuthState(auth);
   const [signOut] = useSignOut(auth);
   const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log(user);
+    }, 1000);
+  }, []);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -107,7 +113,7 @@ export default function GlobalNavBar({
               <Box>
                 <Tooltip title="Your account">
                   <IconButton sx={{ p: 0 }} onClick={handleMenu}>
-                    <Avatar />
+                    <Avatar src={user?.photoURL as string} />
                   </IconButton>
                 </Tooltip>
                 <Menu
