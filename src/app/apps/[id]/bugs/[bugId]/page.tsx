@@ -1,3 +1,4 @@
+"use client";
 import { auth } from "@/app/firebase/config";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@mui/material";
