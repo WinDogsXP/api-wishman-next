@@ -144,6 +144,7 @@ export default function EndpointPage({
                 series={[
                   {
                     label: "Stable",
+                    color: "#59a14f",
                     data: info?.endpointCalls
                       .filter((el) => el.statusNum == 2)
                       .map((v) => ({
@@ -154,6 +155,7 @@ export default function EndpointPage({
                   },
                   {
                     label: "Unstable",
+                    color: "#edc949",
                     data: info?.endpointCalls
                       .filter((el) => el.statusNum == 1)
                       .map((v) => ({
@@ -164,6 +166,7 @@ export default function EndpointPage({
                   },
                   {
                     label: "Down",
+                    color: "#e15759",
                     data: info?.endpointCalls
                       .filter((el) => el.statusNum == 0)
                       .map((v) => ({
