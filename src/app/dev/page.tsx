@@ -18,12 +18,23 @@ import { useRouter } from "next/navigation";
 import handleRouterPush from "@/util/handleRouterPush";
 import { Apps, Logout } from "@mui/icons-material";
 import { useEffect, useState } from "react";
+import { BugInfo } from "@/types";
+import BugListItem from "@/components/BugListItem";
 
 export default function DashboardPage() {
   const [user, loadingAuth] = useAuthState(auth);
   const [signOut, loadingSO, errorSO] = useSignOut(auth);
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+
+  const linkList = [
+    {
+      name: "My Applications",
+      icon: <Apps />,
+      href: "/dev/apps",
+    },
+  ];
+
+  const [statsLoading, setStatsLoading] = useState(true);
   const [stats, setStats] = useState([
     {
       name: "Total apps",
@@ -39,14 +50,6 @@ export default function DashboardPage() {
     },
   ]);
 
-  const linkList = [
-    {
-      name: "My Applications",
-      icon: <Apps />,
-      href: "/dev/apps",
-    },
-  ];
-
   const getStats = () => {
     fetch("/api/report/count", {
       method: "POST",
@@ -59,88 +62,128 @@ export default function DashboardPage() {
       .then((res) => {
         console.log(res);
         setStats(res);
-        setLoading(false);
+        setStatsLoading(false);
       })
       .catch((error) => {
         console.error(error);
-        setLoading(false);
+        setStatsLoading(false);
+      });
+  };
+
+  const [bugsLoading, setBugsLoading] = useState(true);
+  const [bugReports, setBugReports] = useState<BugInfo[]>([]);
+  const getBugReports = () => {
+    fetch("/api/bugs/get/dev", {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/json",
+      },
+      body: JSON.stringify({ userId: user?.uid }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        setBugReports(res);
+        setBugsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setBugsLoading(false);
       });
   };
 
   useEffect(() => {
-    if (!loadingAuth) getStats();
+    if (!loadingAuth) {
+      getStats();
+      getBugReports();
+    }
   }, [loadingAuth]);
 
   return (
     <>
       <PageHeader title="Developer Dashboard" />
-      {loading ? (
+      {loadingAuth ? (
         <LinearProgress />
       ) : user ? (
-        <Stack spacing={2}>
-          <Paper sx={{ p: 1.2 }}>
-            <Stack
-              sx={{
-                gap: 1.5,
-                flexDirection: { xs: "column", sm: "row" },
-                flexWrap: "wrap",
-              }}
-            >
-              {stats.map((stat, index) => (
-                <Paper
-                  key={index}
-                  variant="outlined"
-                  sx={{
-                    p: 0.6,
-                    background: "transparent",
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  <Stack>
-                    <Typography variant="h3">{stat.value}</Typography>
-                    <Typography>{stat.name}</Typography>
-                  </Stack>
-                </Paper>
-              ))}
-            </Stack>
-          </Paper>
-
-          <Paper>
-            <Typography variant="h5">Latest reports</Typography>
-          </Paper>
-
-          <Paper>
-            <List>
-              {linkList.map((link, index) => (
-                <ListItemButton
-                  key={index}
-                  component="a"
-                  href={link.href}
-                  onClick={handleRouterPush(router)}
-                >
-                  <ListItemIcon>{link.icon}</ListItemIcon>
-                  <ListItemText>{link.name}</ListItemText>
-                </ListItemButton>
-              ))}
-              <Divider />
-              <ListItemButton
-                onClick={async () => {
-                  const success = await signOut();
-                  router.replace("/dev/login");
+        <>
+          <LinearProgress
+            sx={{
+              visibility: statsLoading || bugsLoading ? "visible" : "hidden",
+            }}
+          />
+          <Stack spacing={2}>
+            <Paper sx={{ p: 1.2 }}>
+              <Stack
+                sx={{
+                  gap: 1.5,
+                  flexDirection: { xs: "column", sm: "row" },
+                  flexWrap: "wrap",
                 }}
               >
-                <ListItemIcon>
-                  <Logout />
-                </ListItemIcon>
-                <ListItemText>Log out</ListItemText>
-              </ListItemButton>
-            </List>
-          </Paper>
-        </Stack>
+                {stats.map((stat, index) => (
+                  <Paper
+                    key={index}
+                    variant="outlined"
+                    sx={{
+                      p: 0.6,
+                      background: "transparent",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      textAlign: "center",
+                    }}
+                  >
+                    <Stack>
+                      <Typography variant="h3">{stat.value}</Typography>
+                      <Typography>{stat.name}</Typography>
+                    </Stack>
+                  </Paper>
+                ))}
+              </Stack>
+            </Paper>
+
+            <Paper>
+              <Typography variant="h5" sx={{ px: 2, py: 1 }}>
+                Latest reports
+              </Typography>
+              <Divider />
+              <List sx={{ p: "0 !important" }}>
+                {bugReports.map((value, index) => (
+                  <BugListItem bugInfo={value} key={index} />
+                ))}
+              </List>
+            </Paper>
+
+            <Paper>
+              <List>
+                {linkList.map((link, index) => (
+                  <ListItemButton
+                    key={index}
+                    component="a"
+                    href={link.href}
+                    onClick={handleRouterPush(router)}
+                  >
+                    <ListItemIcon>{link.icon}</ListItemIcon>
+                    <ListItemText>{link.name}</ListItemText>
+                  </ListItemButton>
+                ))}
+                <Divider />
+                <ListItemButton
+                  onClick={async () => {
+                    const success = await signOut();
+                    router.replace("/dev/login");
+                  }}
+                >
+                  <ListItemIcon>
+                    <Logout />
+                  </ListItemIcon>
+                  <ListItemText>Log out</ListItemText>
+                </ListItemButton>
+              </List>
+            </Paper>
+          </Stack>
+        </>
       ) : (
         <Paper sx={{ p: 1 }}>
           <Paper
