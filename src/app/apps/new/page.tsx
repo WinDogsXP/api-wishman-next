@@ -12,7 +12,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import formDataToDict from "@/util/formDataToDict";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { enqueueSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
@@ -35,7 +35,7 @@ export default function NewApp() {
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const formDataDict = formDataToDict(formData);
     formDataDict.hours = parseInt(formDataDict.hours);
-
+    formDataDict.reportEmail = user?.email ?? "";
     const apiUrl = "/api/apps/new";
 
     console.log(formDataDict);
