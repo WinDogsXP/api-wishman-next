@@ -67,10 +67,10 @@ export default function NewBugReport({ params }: { params: { id: string } }) {
             disabled={loading}
           />
           <TextField
-            label="Description"
+            label="Details"
             multiline
             required
-            name="description"
+            name="details"
             type="text"
             disabled={loading}
           />
