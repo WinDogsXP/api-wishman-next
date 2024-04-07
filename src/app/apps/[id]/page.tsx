@@ -4,7 +4,14 @@ import EndpointListItem from "@/components/EndpointListItem";
 import PageHeader from "@/components/PageHeader";
 import { AppInfo, Endpoint } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
-import { Add, BugReport, Delete, Edit } from "@mui/icons-material";
+import {
+  Add,
+  BugReport,
+  Delete,
+  Edit,
+  MoreVert,
+  Refresh,
+} from "@mui/icons-material";
 import {
   Paper,
   Stack,
@@ -18,6 +25,9 @@ import {
   Box,
   ListItem,
   Menu,
+  MenuItem,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -34,16 +44,16 @@ export default function ApplicationPage({
   const [user] = useAuthState(auth);
   const router = useRouter();
   const [appInfo, setAppInfo] = useState<AppInfo>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitalLoad] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
 
   function loadApp() {
+    setLoading(true);
     fetch(apiUrl + params.id)
       .then((res) => res.json())
       .then((json) => {
         const _appInfo = json.app as AppInfo;
-
-        console.log(_appInfo);
 
         // Add appId to each endpoint object
         const _endpoints = [] as Endpoint[];
@@ -63,12 +73,15 @@ export default function ApplicationPage({
       });
   }
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // Delete menu
+  const [delMenuAnchorEl, setDelMenuAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const handleDeleteMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setDelMenuAnchorEl(event.currentTarget);
   };
   const handleDeleteClose = () => {
-    setAnchorEl(null);
+    setDelMenuAnchorEl(null);
   };
 
   function deleteApp() {
@@ -89,9 +102,28 @@ export default function ApplicationPage({
       });
   }
 
+  // Auto refresh menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const autoRefreshInterval = 5000;
+  const [autoRefresh, setAutoRefresh] = useState(true);
+
   useEffect(() => {
-    if (loading) loadApp();
-  }, [loading]);
+    if (initialLoad) {
+      loadApp();
+      setInitalLoad(false);
+    }
+
+    if (!loading && autoRefresh) {
+      setTimeout(loadApp, autoRefreshInterval);
+    }
+  }, [initialLoad, loading, autoRefresh]);
 
   useEffect(() => {
     setCanEdit(
@@ -131,7 +163,7 @@ export default function ApplicationPage({
               </Tooltip>
               <Menu
                 id="menu-delete-popup"
-                anchorEl={anchorEl}
+                anchorEl={delMenuAnchorEl}
                 anchorOrigin={{
                   vertical: "bottom",
                   horizontal: "right",
@@ -141,7 +173,7 @@ export default function ApplicationPage({
                   vertical: "top",
                   horizontal: "right",
                 }}
-                open={Boolean(anchorEl)}
+                open={Boolean(delMenuAnchorEl)}
                 onClose={handleDeleteClose}
               >
                 <Stack
@@ -181,7 +213,9 @@ export default function ApplicationPage({
           </>
         )}
       </PageHeader>
-      <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
+      <LinearProgress
+        style={{ visibility: initialLoad ? "visible" : "hidden" }}
+      />
       <Stack gap={1}>
         <Paper>
           <Stack gap={1} sx={{ p: 1.8 }}>
@@ -223,7 +257,57 @@ export default function ApplicationPage({
                 </IconButton>
               </Tooltip>
             )}
+            <Tooltip title="Refresh">
+              <span>
+                <IconButton
+                  disabled={loading}
+                  onClick={() => {
+                    loadApp();
+                  }}
+                >
+                  <Refresh />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Box>
+              <Tooltip title="More Options">
+                <IconButton onClick={handleMenu}>
+                  <MoreVert />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="menu-delete-popup"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem>
+                  <FormControlLabel
+                    control={<Switch />}
+                    checked={autoRefresh}
+                    onChange={() => {
+                      setAutoRefresh(!autoRefresh);
+                    }}
+                    label="Auto Refresh"
+                  />
+                </MenuItem>
+              </Menu>
+            </Box>
           </PageHeader>
+          <LinearProgress
+            style={{
+              visibility: loading && !initialLoad ? "visible" : "hidden",
+            }}
+          />
 
           <Paper>
             {!appInfo || !appInfo.endpoint || appInfo.endpoint.length == 0 ? (
