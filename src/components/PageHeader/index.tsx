@@ -20,7 +20,7 @@ export default function PageHeader({
     <Box
       sx={{
         display: "flex",
-        gap: small ? 0.6 : 1.2,
+        gap: 0.4,
         mb: small ? 0.4 : 0.8,
         userSelect: "none",
       }}

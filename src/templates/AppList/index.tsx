@@ -3,14 +3,18 @@ import AppListItem from "@/components/AppListItem";
 import PageHeader from "@/components/PageHeader";
 import { AppInfo } from "@/types";
 import handleRouterPush from "@/util/handleRouterPush";
-import { Add, Refresh } from "@mui/icons-material";
+import { Add, MoreVert, Refresh } from "@mui/icons-material";
 import {
   Box,
   Divider,
+  FormControlLabel,
   IconButton,
   LinearProgress,
   List,
+  Menu,
+  MenuItem,
   Paper,
+  Switch,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -42,6 +46,7 @@ export default function AppList({
   };
 
   const loadApps = () => {
+    setLoading(true);
     fetch(apiUrl, onlyUser ? userFetchParams : undefined)
       .then((res) => res.json())
       .then((res) => {
@@ -55,11 +60,25 @@ export default function AppList({
       });
   };
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const autoRefreshInterval = 10000;
+  const [autoRefresh, setAutoRefresh] = useState(true);
+
   useEffect(() => {
+    if (!loading && autoRefresh) {
+      setTimeout(loadApps, autoRefreshInterval);
+    }
     if (onlyUser && (user == null || user == undefined)) {
       return;
     } else if (loading) loadApps();
-  }, [loading, onlyUser, user]);
+  }, [loading, onlyUser, user, autoRefresh]);
 
   return (
     <Box>
@@ -90,6 +109,39 @@ export default function AppList({
             </IconButton>
           </span>
         </Tooltip>
+        <Box>
+          <Tooltip title="More Options">
+            <IconButton onClick={handleMenu}>
+              <MoreVert />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            id="menu-delete-popup"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem>
+              <FormControlLabel
+                control={<Switch />}
+                checked={autoRefresh}
+                onChange={() => {
+                  setAutoRefresh(!autoRefresh);
+                }}
+                label="Auto Refresh"
+              />
+            </MenuItem>
+          </Menu>
+        </Box>
       </PageHeader>
       <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       <Paper>

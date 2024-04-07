@@ -8,6 +8,7 @@ interface AppInfo {
   reportEmail?: string;
   status?: "Stable" | "Unstable" | "Down";
   endpoint?: Endpoint[];
+  lastUpdate?: Date;
 }
 interface Endpoint {
   id: string;
