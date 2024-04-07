@@ -1,7 +1,7 @@
 "use client";
 import { AppInfo } from "@/types";
 import { WebAsset } from "@mui/icons-material";
-import { Box, Chip, ListItemButton, Typography } from "@mui/material";
+import { Box, Chip, ListItemButton, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function AppListItem({ appInfo }: { appInfo: AppInfo }) {
@@ -32,7 +32,7 @@ export default function AppListItem({ appInfo }: { appInfo: AppInfo }) {
       </Box>
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 1 }}>
         <Typography sx={{ gap: 0.5 }}>{appInfo.name}</Typography>
-        <Box>
+        <Stack direction="row" gap={0.6}>
           <Chip
             label={appInfo.status ? appInfo.status : "Unknown"}
             size="small"
@@ -44,7 +44,7 @@ export default function AppListItem({ appInfo }: { appInfo: AppInfo }) {
                 : "error"
             }
           />
-        </Box>
+        </Stack>
       </Box>
     </ListItemButton>
   );
