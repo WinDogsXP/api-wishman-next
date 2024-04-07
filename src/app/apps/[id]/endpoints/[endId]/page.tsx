@@ -119,6 +119,12 @@ export default function EndpointPage({
             <ListItem>
               <Typography>Name: {info?.name}</Typography>
             </ListItem>
+            <ListItem>
+              <Typography>URL: {info?.url}</Typography>
+            </ListItem>
+            <ListItem>
+              <Typography>Method: {info?.method}</Typography>
+            </ListItem>
           </List>
         </Paper>
 
@@ -136,10 +142,10 @@ export default function EndpointPage({
               </Tooltip>
             )}
           </PageHeader>
-          <Paper>
+          <Paper style={{ padding: "10px" }}>
             {!loading && (
               <ScatterChart
-                width={800}
+                width={750}
                 height={300}
                 series={[
                   {
@@ -181,6 +187,7 @@ export default function EndpointPage({
             <Paper
               style={{
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -226,6 +233,9 @@ export default function EndpointPage({
                 })}
                 text={({ value, valueMax }) => `${value} / ${valueMax}`}
               />
+              <Typography style={{ fontSize: "30px" }}>
+                Last 10 API calls
+              </Typography>
             </Paper>
           </Paper>
         </Stack>
